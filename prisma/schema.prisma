@@ -8,3 +8,8 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model link {
+  ref_link   String
+  Short_Link String @id @unique
+}
