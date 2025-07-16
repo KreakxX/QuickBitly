@@ -13,3 +13,9 @@ model link {
   ref_link   String
   Short_Link String @id @unique
 }
+
+model user {
+  username  String @id @unique
+  password  String 
+}
+

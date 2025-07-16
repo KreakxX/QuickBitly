@@ -16,16 +16,26 @@ export default function Home() {
     e.preventDefault();
     if (!url) return;
     setIsLoading(true);
+    const response = await fetch("/api/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url: url,
+      }),
+    });
+    const json = await response.json();
+    const shortUrl = json.shortLink;
+    setShortUrl(shortUrl);
   };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-400 to-blue-600">
       <div className="container mx-auto px-4 py-50">
-        {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <h1 className="font-bold text-white text-4xl">QuickBitly</h1>
@@ -35,7 +45,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Main Card */}
         <div className="max-w-2xl mx-auto">
           <Card className="backdrop-blur-sm bg-white/10 border-white/20 shadow-2xl">
             <CardContent className="p-8">
@@ -77,7 +86,6 @@ export default function Home() {
                 </Button>
               </form>
 
-              {/* Result */}
               {shortUrl && (
                 <div className="mt-8 p-4 bg-white/20 rounded-lg border border-white/30">
                   <label className="text-white font-medium text-sm block mb-2">
