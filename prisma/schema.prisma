@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -9,13 +8,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model link {
+model User {
+  username String @id @unique
+  password String
+  links    Link[]
+}
+
+model Link {
   ref_link   String
   Short_Link String @id @unique
+  user       User   @relation(fields: [userId], references: [username])
+  userId     String
 }
-
-model user {
-  username  String @id @unique
-  password  String 
-}
-
