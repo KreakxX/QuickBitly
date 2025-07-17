@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         const { url } = body
         
         const CS = await cookies();
-        const token = CS.get("jwtToken")?.value;
+        const token = CS.get("jwtToken")?.value; 
 
         if(!token){
             return NextResponse.json({ success: false}, { status: 400 })
@@ -21,7 +21,6 @@ export async function POST(req: Request) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "123");
         if (!decoded || typeof decoded === "string") {
                 return NextResponse.json({ success: false }, { status: 400 });
-
             }
 
         const user = await prisma.user.findUnique({

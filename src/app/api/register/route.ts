@@ -15,6 +15,7 @@ export async function POST(req: Request) {
           password: password
         }
       })
+      return NextResponse.json({ success: true, message: "Login successful" }); 
 
   }catch(error){
     return NextResponse.json({ success: false}, { status: 400 })

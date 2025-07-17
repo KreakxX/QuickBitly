@@ -1,11 +1,14 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Copy, Link, Zap } from "lucide-react";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -15,7 +18,6 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
-    setIsLoading(true);
     const response = await fetch("/api/create", {
       method: "POST",
       headers: {
@@ -29,6 +31,31 @@ export default function Home() {
     const shortUrl = json.shortLink;
     setShortUrl(shortUrl);
   };
+
+  useEffect(() => {
+    const checkAuthToken = async () => {
+      try {
+        const response = await fetch("/api/validate-token", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          return;
+        } else {
+          window.location.href = "/login";
+          return;
+        }
+      } catch (error) {
+        console.error("Token validation error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuthToken();
+  }, []);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl);
