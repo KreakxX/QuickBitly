@@ -14,6 +14,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [links, setLinks] = useState<any[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +31,20 @@ export default function Home() {
     const json = await response.json();
     const shortUrl = json.shortLink;
     setShortUrl(shortUrl);
+  };
+
+  const handleLinkLoading = async () => {
+    const response = await fetch("/api/load", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const json = await response.json();
+    const links = json.links;
+    console.log(links);
+    setLinks(links);
   };
 
   useEffect(() => {
@@ -99,19 +114,19 @@ export default function Home() {
 
                 <Button
                   type="submit"
-                  disabled={isLoading || !url}
                   className="w-full h-12 bg-white text-blue-600 hover:bg-white/90 font-semibold text-lg shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50"
                 >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
-                      Shortening...
-                    </div>
-                  ) : (
-                    "Shorten URL"
-                  )}
+                  Shorten URL
                 </Button>
               </form>
+              <Button
+                onClick={() => {
+                  handleLinkLoading();
+                }}
+                className="w-full h-12 mt-5 bg-white text-blue-600 hover:bg-white/90 font-semibold text-lg shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50"
+              >
+                Load Links
+              </Button>
 
               {shortUrl && (
                 <div className="mt-8 p-4 bg-white/20 rounded-lg border border-white/30">
@@ -135,6 +150,23 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-10">
+                {links
+                  ? links.map((link, index) => (
+                      <div key={index} className="mb-2">
+                        <div className="flex justify-between">
+                          <p className="font-bold text-white">
+                            Short Link: {link.Short_Link}
+                          </p>
+                          <p className="text-white">
+                            Ref Link: {link.ref_link}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  : null}
+              </div>
             </CardContent>
           </Card>
         </div>
