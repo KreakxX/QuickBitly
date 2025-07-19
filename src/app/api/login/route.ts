@@ -8,22 +8,20 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient()
 
 export async function POST(req: Request) {
-  try{
-      const body = await req.json()
-      const {username, password} = body;
+  try {
+    const body = await req.json();
+    const { username, password } = body;
 
-      const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await prisma.user.findUnique({
         where: {
-          username: username,
-          password: hashedPassword
+          username: username
         }})
       const secret = process.env.JWT_SECRET || "123";
 
-      if (user) {
+      if (user && await bcrypt.compare(password, user.password)) {
         const CS = await cookies();
-        var token = jwt.sign({ username: username, password: password }, secret);
+        var token = jwt.sign({ username: username}, secret);
         await CS.set('jwtToken',token,{secure: true, httpOnly: true, sameSite: 'strict', maxAge: 60 * 60 * 24 * 7}); 
 
         return NextResponse.json({ success: true, message: "Login successful" }); 
