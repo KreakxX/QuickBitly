@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from "../../generated/prisma";
+import { NextRequest } from "next/server";
 
 const prisma = new PrismaClient()
 
-export  async function GET(req: Request, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
     try {
         const link = await prisma.link.findUnique({
             where: { Short_Link: id },
