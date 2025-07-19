@@ -4,8 +4,8 @@ import { NextRequest } from "next/server";
 
 const prisma = new PrismaClient()
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
     try {
         const link = await prisma.link.findUnique({
             where: { Short_Link: id },
@@ -20,5 +20,4 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
         console.error('Error fetching link:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-
 }
